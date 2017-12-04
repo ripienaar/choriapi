@@ -1,0 +1,4 @@
+package: github.com/ripienaar/choriapi
+import:
+- package: github.com/morus12/dht22
+- package: github.com/choria-io/go-choria

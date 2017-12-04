@@ -1,0 +1,64 @@
+hash: 70d78ba558bc111996999ea81b0388fe81e21ce03fc5559d730d10f0ca3a16a5
+updated: 2017-12-04T21:59:26.243681+01:00
+imports:
+- name: github.com/choria-io/go-choria
+  version: 91bd98a3f036eb93b6b588fecf9870a3ec9e21e2
+  subpackages:
+  - agents/discovery
+  - build
+  - choria
+  - protocol
+  - protocol/v1
+  - registration
+  - server
+  - server/agents
+  - server/data
+  - server/discovery
+  - server/discovery/agents
+  - server/discovery/classes
+  - server/discovery/facts
+  - server/discovery/identity
+  - server/registration
+- name: github.com/ghodss/yaml
+  version: 0ca9ea5df5451ffdf184b4428c902747c2c11cd7
+- name: github.com/golang/glog
+  version: 23def4e6c14b4da8ac2ed8007337bc5eb5007998
+- name: github.com/kidoman/embd
+  version: d3d8c0c5c68dc6caccebb7d720f36e64bafd0a62
+  subpackages:
+  - host/generic
+  - host/rpi
+- name: github.com/morus12/dht22
+  version: 87805f7fca724f0d738d2849d9f4e4f00ccee6de
+- name: github.com/nats-io/go-nats
+  version: 29f9728a183bf3fa7e809e14edac00b33be72088
+  subpackages:
+  - encoders/builtin
+  - util
+- name: github.com/nats-io/nuid
+  version: 289cccf02c178dc782430d534e3c1f5b72af807f
+- name: github.com/satori/go.uuid
+  version: 879c5887cd475cd7864858769793b2ceb0d44feb
+- name: github.com/sirupsen/logrus
+  version: f006c2ac4710855cf0f916dd6b77acf6b048dc6e
+- name: github.com/tidwall/gjson
+  version: be96719f990978a867f52c48f29d43f6b591da28
+- name: github.com/tidwall/match
+  version: 173748da739a410c5b0b813b956f89ff94730b4c
+- name: github.com/xeipuuv/gojsonpointer
+  version: 6fe8760cad3569743d51ddbb243b26f8456742dc
+- name: github.com/xeipuuv/gojsonreference
+  version: e02fc20de94c78484cd5ffb007f8af96be030a45
+- name: github.com/xeipuuv/gojsonschema
+  version: 0c8571ac0ce161a5feb57375a9cdf148c98c0f70
+- name: golang.org/x/crypto
+  version: 9477e0b78b9ac3d0b03822fd95422e2fe07627cd
+  subpackages:
+  - ssh/terminal
+- name: golang.org/x/sys
+  version: f7928cfef4d09d1b080aa2b6fd3ca9ba1567c733
+  subpackages:
+  - unix
+- name: gopkg.in/yaml.v2
+  version: 287cf08546ab5e7e37d55a84f7ed3fd1db036de5
+testImports: []

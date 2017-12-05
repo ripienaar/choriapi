@@ -42,7 +42,9 @@ func (da *DHT220Agent) readingAction(req *RPCRequestBody, result *RPCReply) {
 	}
 }
 
+// ========================================================================================
 // Everything below will go in some form of helper so does not need to be types by everyone
+// ========================================================================================
 
 type RPCReply struct {
 	Statuscode int         `json:"statuscode"`

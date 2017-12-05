@@ -34,6 +34,7 @@ type reading struct {
 
 var rpi *RPi
 
+// NewRPi sets up the DHT22 reading and configures the embedded Choria
 func NewRPi(pin string) (*RPi, error) {
 	rpi := &RPi{
 		Pin:    pin,
@@ -41,18 +42,25 @@ func NewRPi(pin string) (*RPi, error) {
 		mu:     &sync.Mutex{},
 	}
 
-	cfg, err := choria.NewConfig(choria.UserConfig())
+	cfg, err := choria.NewConfig("/dev/null")
 	if err != nil {
 		return nil, err
 	}
 
+	// hard codes all the various config
 	cfg.DisableTLS = true
 	build.Secure = "false"
+	cfg.Choria.MiddlewareHosts = []string{"demo.nats.io:4222"}
+	cfg.RegisterInterval = 60
+	cfg.LogLevel = "debug"
+	cfg.Choria.SSLDir = "/nonexisting"
 
 	fw, err := choria.NewWithConfig(cfg)
 	if err != nil {
 		return nil, err
 	}
+
+	fw.SetupLogging()
 
 	rpi.choriaInstance, err = server.NewInstance(fw)
 	if err != nil {
@@ -62,6 +70,8 @@ func NewRPi(pin string) (*RPi, error) {
 	return rpi, nil
 }
 
+// Run starts the Choria instance and once connected register
+// our agent and registration provider
 func (dh *RPi) Run(ctx context.Context, wg *sync.WaitGroup) {
 	wg.Add(1)
 	dh.choriaInstance.Run(ctx, wg)
@@ -104,6 +114,7 @@ func (dh *RPi) read() (*reading, error) {
 	return &r, nil
 }
 
+// Start is the interface to registration in Choria - will be renamed soon for clarity
 func (dh *RPi) Start(ctx context.Context, wg *sync.WaitGroup, interval int, output chan *data.RegistrationItem) {
 	defer wg.Done()
 

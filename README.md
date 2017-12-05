@@ -2,11 +2,26 @@
 
 The Choria Go daemon is embeddable into other Go applications.
 
+The use case here is if you have some existing code, or wish to make a very focussed custom app, but want to:
+
+  * Make use of the Choria protocol security
+  * Make use of the Choria network protocol design to avoid doing your own
+  * Publish data to Choria registration system where the adapters can be used to rewrite the data into kafka/graphite/etc
+  * Host your own custom Go agent that can interact with the internals of your app
+  * Compile it into your binary
+
 This is a demonstration that runs on a Raspberry Pi, it reads weather and humidity from a DHT220 sensor.
 
-It then starts an embedded Choria server and register itself as a reigstration data provider.
+It:
 
-It also starts an embedded agent that would be usable from the normal ruby `mco rpc` cli.
+  * Hard codes and compiles in all the needed configuration - you'd use your own provisioning system to get this data
+  * Exposes weather data to the Choria registration system and publish it regularly
+  * Has a custom Choria agent that expose weather data on demand
+  * Embeds a Choria server into it and connect to some middleware
+  * Disables TLS and Cert based security - bad idea you would integrate with Consul/AWS IOT to get certs in the real world
+  
+It does not use the old mcollective DDL files, but it includes one so your Ruby mcollective configured with Choria can communicate with this agent
+
 
 ```
 root@f35711d:/usr/src/app# DH2200_PIN=GPIO_4 ./choriapi
@@ -46,7 +61,7 @@ eyJ0ZW1wZXJhdHVyZSI6MTguOCwiaHVtaWR5Ijo1Ni41LCJ0aW1lIjoiMjAxNy0xMi0wNFQyMjozNjo0
 {"temperature":18.8,"humidy":56.5,"time":"2017-12-04T22:36:42.636619913Z"}
 ```
 
-In includes a DDL file for the ruby choria, if installed and configured you can do:
+In includes a DDL file for the ruby choria, if installed and configured you can do, note the Go code does not use the DDL:
 
 ```
 [rip@dev1]% mco rpc dht220 reading --config .mcollective.choriapi

@@ -28,7 +28,7 @@ type RPi struct {
 
 type reading struct {
 	Temperature float32   `json:"temperature"`
-	Humidity    float32   `json:"humidy"`
+	Humidity    float32   `json:"humidity"`
 	Time        time.Time `json:"time"`
 }
 

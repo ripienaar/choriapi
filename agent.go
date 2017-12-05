@@ -1,6 +1,7 @@
 package main
 
 import (
+	"encoding/json"
 	"fmt"
 
 	"github.com/choria-io/go-choria/choria"
@@ -14,17 +15,6 @@ type DHT220Agent struct {
 	log  *logrus.Entry
 }
 
-type RPCRequestBody struct {
-	Agent  string `json:"agent"`
-	Action string `json:"action"`
-}
-
-type RPCReply struct {
-	Statuscode int      `json:"statuscode"`
-	Statusmsg  string   `json:"statusmsg"`
-	Data       *reading `json:"data"`
-}
-
 func NewDHT220Agent() (*DHT220Agent, error) {
 	a := &DHT220Agent{
 		log: logrus.WithFields(logrus.Fields{"agent": "dht220"}),
@@ -34,12 +24,75 @@ func NewDHT220Agent() (*DHT220Agent, error) {
 			Author:      "R.I.Pienaar <rip@devco.net>",
 			Version:     "0.0.1",
 			License:     "Apache-2.0",
-			Timeout:     2,
+			Timeout:     10,
 			URL:         "http://choria.io",
 		},
 	}
 
 	return a, nil
+}
+
+func (da *DHT220Agent) readingAction(req *RPCRequestBody, result *RPCReply) {
+	var err error
+
+	result.Data, err = rpi.read()
+	if err != nil {
+		result.Statuscode = 5
+		result.Statusmsg = fmt.Sprintf("Could not read data to publish: %s", err.Error())
+	}
+}
+
+// Everything below will go in some form of helper so does not need to be types by everyone
+
+type RPCReply struct {
+	Statuscode int         `json:"statuscode"`
+	Statusmsg  string      `json:"statusmsg"`
+	Data       interface{} `json:"data"`
+}
+
+type RPCRequestBody struct {
+	Agent  string `json:"agent"`
+	Action string `json:"action"`
+}
+
+func (da *DHT220Agent) Handle(msg *choria.Message, request protocol.Request, outbox chan *agents.AgentReply) {
+	var err error
+
+	rpcreply := da.newReply()
+	defer da.publish(rpcreply, msg, request, outbox)
+
+	rpcreq, err := da.requestFromMsg(msg.Payload)
+	if err != nil {
+		rpcreply.Statuscode = 5
+		rpcreply.Statusmsg = fmt.Sprintf("Could not process request: %s", err.Error())
+
+		return
+	}
+
+	switch rpcreq.Action {
+	case "reading":
+		da.readingAction(rpcreq, rpcreply)
+	default:
+		rpcreply.Statuscode = 2
+		rpcreply.Statusmsg = fmt.Sprintf("Unknown action %s", rpcreq.Action)
+	}
+}
+
+func (da *DHT220Agent) publish(rpc *RPCReply, msg *choria.Message, request protocol.Request, outbox chan *agents.AgentReply) {
+	reply := &agents.AgentReply{
+		Message: msg,
+		Request: request,
+	}
+
+	j, err := json.Marshal(rpc)
+	if err != nil {
+		logrus.Errorf("Could not JSON encode reply: %s", err.Error())
+		reply.Error = err
+	}
+
+	reply.Body = j
+
+	outbox <- reply
 }
 
 func (da *DHT220Agent) Name() string {
@@ -59,21 +112,14 @@ func (da *DHT220Agent) newReply() *RPCReply {
 
 	return reply
 }
-func (da *DHT220Agent) Handle(msg *choria.Message, request protocol.Request, result chan *agents.AgentReply) {
-	reply := &agents.AgentReply{
-		Message: msg,
-		Request: request,
-	}
 
-	var err error
+func (da *DHT220Agent) requestFromMsg(msg string) (*RPCRequestBody, error) {
+	r := &RPCRequestBody{}
 
-	rpc := da.newReply()
-	rpc.Data, err = rpi.read()
+	err := json.Unmarshal([]byte(msg), r)
 	if err != nil {
-		rpc.Statuscode = 5
-		rpc.Statusmsg = fmt.Sprintf("Could not read data to publish: %s", err.Error())
-		reply.Error = fmt.Errorf(rpc.Statusmsg)
+		return nil, fmt.Errorf("Could not parse incoming request: %s", err.Error())
 	}
 
-	result <- reply
+	return r, nil
 }

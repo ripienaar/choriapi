@@ -175,9 +175,8 @@ func main() {
 			log.Printf("Shutting down on %s", sig)
 			cancel()
 		case <-ctx.Done():
+			wg.Wait()
 			return
 		}
 	}
-
-	wg.Wait()
 }

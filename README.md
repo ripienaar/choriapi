@@ -45,3 +45,21 @@ Get the data in the Request:
 eyJ0ZW1wZXJhdHVyZSI6MTguOCwiaHVtaWR5Ijo1Ni41LCJ0aW1lIjoiMjAxNy0xMi0wNFQyMjozNjo0Mi42MzY2MTk5MTNaIn0=
 {"temperature":18.8,"humidy":56.5,"time":"2017-12-04T22:36:42.636619913Z"}
 ```
+
+In includes a DDL file for the ruby choria, if installed and configured you can do:
+
+```
+[rip@dev1]% mco rpc dht220 reading --config .mcollective.choriapi
+Discovering hosts using the mc method for 2 second(s) .... 1
+
+ * [ ============================================================> ] 1 / 1
+
+
+f35711d
+        humidy: 54.6
+   Temperature: 18.5
+          Time: 2017-12-05T08:11:59.623588181Z
+
+
+Finished processing 1 / 1 hosts in 696.85 ms
+```

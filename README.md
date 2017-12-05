@@ -33,7 +33,7 @@ INFO[0000] Subscribing node f35711d to mcollective.node.f35711d  component=serve
 INFO[0000] Registering new agent dht220 of type dht220   component=server identity=f35711d subsystem=agents
 INFO[0000] Subscribing agent dht220 to mcollective.broadcast.agent.dht220  component=server identity=f35711d subsystem=agents
 2017/12/04 22:30:18 Starting to send data every 60 seconds
-2017/12/04 22:30:18 Publishing {"temperature":18.8,"humidy":55,"time":"2017-12-04T22:30:18.610248213Z"}
+2017/12/04 22:30:18 Publishing {"temperature":18.8,"humidity":55,"time":"2017-12-04T22:30:18.610248213Z"}
 INFO[0000] Sending a broadcast message to NATS target 'mcollective.broadcast.agent.temperature' for message dca08402796f4ca78b578f4a7f5570d6 type request
 ```
 
@@ -58,10 +58,12 @@ Get the data in the Request:
 ```
 % cat|base64 -d
 eyJ0ZW1wZXJhdHVyZSI6MTguOCwiaHVtaWR5Ijo1Ni41LCJ0aW1lIjoiMjAxNy0xMi0wNFQyMjozNjo0Mi42MzY2MTk5MTNaIn0=
-{"temperature":18.8,"humidy":56.5,"time":"2017-12-04T22:36:42.636619913Z"}
+{"temperature":18.8,"humidity":56.5,"time":"2017-12-04T22:36:42.636619913Z"}
 ```
 
-In includes a DDL file for the ruby choria, if installed and configured you can do, note the Go code does not use the DDL:
+In includes a DDL file for the ruby choria, if installed and configured you can interact with your rpc:
+
+*NOTE:* The DDL isn't used by the Go code
 
 ```
 [rip@dev1]% mco rpc dht220 reading --config .mcollective.choriapi
@@ -71,7 +73,7 @@ Discovering hosts using the mc method for 2 second(s) .... 1
 
 
 f35711d
-        humidy: 54.6
+        Humidity: 54.6
    Temperature: 18.5
           Time: 2017-12-05T08:11:59.623588181Z
 

@@ -23,7 +23,6 @@ type RPi struct {
 
 	sensor         *dht22.DHT22
 	choriaInstance *server.Instance
-	mu             *sync.Mutex
 }
 
 type reading struct {
@@ -33,34 +32,35 @@ type reading struct {
 }
 
 var rpi *RPi
+var fw *choria.Framework
+var mu *sync.Mutex
 
 // NewRPi sets up the DHT22 reading and configures the embedded Choria
 func NewRPi(pin string) (*RPi, error) {
 	rpi := &RPi{
 		Pin:    pin,
 		sensor: dht22.New(pin),
-		mu:     &sync.Mutex{},
 	}
+
+	mu = &sync.Mutex{}
 
 	cfg, err := choria.NewConfig("/dev/null")
 	if err != nil {
 		return nil, err
 	}
 
-	// hard codes all the various config
 	cfg.DisableTLS = true
 	build.Secure = "false"
 	cfg.Choria.MiddlewareHosts = []string{"demo.nats.io:4222"}
 	cfg.RegisterInterval = 60
 	cfg.LogLevel = "debug"
-	cfg.Choria.SSLDir = "/nonexisting"
 
 	fw, err := choria.NewWithConfig(cfg)
 	if err != nil {
 		return nil, err
 	}
 
-	fw.SetupLogging()
+	fw.SetupLogging(true)
 
 	rpi.choriaInstance, err = server.NewInstance(fw)
 	if err != nil {
@@ -88,12 +88,12 @@ func (dh *RPi) Run(ctx context.Context, wg *sync.WaitGroup) {
 		panic(err)
 	}
 
-	dh.choriaInstance.AddRegistrationProvider(ctx, wg, dh)
+	dh.choriaInstance.RegisterRegistrationProvider(ctx, wg, dh)
 }
 
 func (dh *RPi) read() (*reading, error) {
-	dh.mu.Lock()
-	defer dh.mu.Unlock()
+	mu.Lock()
+	defer mu.Unlock()
 
 	temp, err := dh.sensor.Temperature()
 	if err != nil {
@@ -114,8 +114,8 @@ func (dh *RPi) read() (*reading, error) {
 	return &r, nil
 }
 
-// Start is the interface to registration in Choria - will be renamed soon for clarity
-func (dh *RPi) Start(ctx context.Context, wg *sync.WaitGroup, interval int, output chan *data.RegistrationItem) {
+// StartRegistration is the interface to registration in Choria
+func (dh *RPi) StartRegistration(ctx context.Context, wg *sync.WaitGroup, interval int, output chan *data.RegistrationItem) {
 	defer wg.Done()
 
 	log.Printf("Starting to send data every %d seconds", interval)
@@ -187,6 +187,7 @@ func main() {
 			cancel()
 		case <-ctx.Done():
 			wg.Wait()
+			cancel()
 			return
 		}
 	}

@@ -19,9 +19,10 @@ It:
   * Has a custom Choria agent that expose weather data on demand
   * Embeds a Choria server into it and connect to some middleware
   * Disables TLS and Cert based security - bad idea you would integrate with Consul/AWS IOT to get certs in the real world
-  
+
 It does not use the old mcollective DDL files, but it includes one so your Ruby mcollective configured with Choria can communicate with this agent
 
+NOTE: To build this on a non rpi you do `GOOS=linux GOARCH=arm GOARM=5 go build`
 
 ```
 root@f35711d:/usr/src/app# DH2200_PIN=GPIO_4 ./choriapi
@@ -61,7 +62,7 @@ eyJ0ZW1wZXJhdHVyZSI6MTguOCwiaHVtaWR5Ijo1Ni41LCJ0aW1lIjoiMjAxNy0xMi0wNFQyMjozNjo0
 {"temperature":18.8,"humidity":56.5,"time":"2017-12-04T22:36:42.636619913Z"}
 ```
 
-In includes a DDL file for the ruby choria, if installed and configured you can interact with your rpc:
+In includes a DDL file for the ruby Choria, if installed and configured you can interact with your RPC:
 
 *NOTE:* The DDL isn't used by the Go code
 

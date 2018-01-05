@@ -1,10 +1,16 @@
-hash: 70d78ba558bc111996999ea81b0388fe81e21ce03fc5559d730d10f0ca3a16a5
-updated: 2017-12-04T21:59:26.243681+01:00
+hash: 99d2fd0dad76eeb5712d7be0c6599b16d8abc5717f102849ae7e8e150b7fe5ea
+updated: 2018-01-05T12:42:44.478845+01:00
 imports:
-- name: github.com/choria-io/go-choria
-  version: 91bd98a3f036eb93b6b588fecf9870a3ec9e21e2
+- name: github.com/beorn7/perks
+  version: 4c0e84591b9aa9e6dcfdf3e020114cd81f89d5f9
   subpackages:
+  - quantile
+- name: github.com/choria-io/go-choria
+  version: 519814d95e2ea3be63937a7b39ef67f302f1cd87
+  subpackages:
+  - agents/choriautil
   - agents/discovery
+  - backoff
   - build
   - choria
   - protocol
@@ -12,6 +18,7 @@ imports:
   - registration
   - server
   - server/agents
+  - server/agents/mcorpc
   - server/data
   - server/discovery
   - server/discovery/agents
@@ -19,30 +26,57 @@ imports:
   - server/discovery/facts
   - server/discovery/identity
   - server/registration
+  - srvcache
 - name: github.com/ghodss/yaml
   version: 0ca9ea5df5451ffdf184b4428c902747c2c11cd7
 - name: github.com/golang/glog
   version: 23def4e6c14b4da8ac2ed8007337bc5eb5007998
+- name: github.com/golang/protobuf
+  version: 1e59b77b52bf8e4b449a57e6f79f21226d571845
+  subpackages:
+  - proto
 - name: github.com/kidoman/embd
   version: d3d8c0c5c68dc6caccebb7d720f36e64bafd0a62
   subpackages:
   - host/generic
   - host/rpi
+- name: github.com/matttproud/golang_protobuf_extensions
+  version: c12348ce28de40eed0136aa2b644d0ee0650e56c
+  subpackages:
+  - pbutil
 - name: github.com/morus12/dht22
   version: 87805f7fca724f0d738d2849d9f4e4f00ccee6de
 - name: github.com/nats-io/go-nats
-  version: 29f9728a183bf3fa7e809e14edac00b33be72088
+  version: d66cb54e6b7bdd93f0b28afc8450d84c780dfb68
   subpackages:
   - encoders/builtin
   - util
 - name: github.com/nats-io/nuid
   version: 289cccf02c178dc782430d534e3c1f5b72af807f
+- name: github.com/prometheus/client_golang
+  version: 967789050ba94deca04a5e84cce8ad472ce313c1
+  subpackages:
+  - prometheus
+- name: github.com/prometheus/client_model
+  version: 99fa1f4be8e564e8a6b613da7fa6f46c9edafc6c
+  subpackages:
+  - go
+- name: github.com/prometheus/common
+  version: 2e54d0b93cba2fd133edc32211dcc32c06ef72ca
+  subpackages:
+  - expfmt
+  - internal/bitbucket.org/ww/goautoneg
+  - model
+- name: github.com/prometheus/procfs
+  version: a6e9df898b1336106c743392c48ee0b71f5c4efa
+  subpackages:
+  - xfs
 - name: github.com/satori/go.uuid
   version: 879c5887cd475cd7864858769793b2ceb0d44feb
 - name: github.com/sirupsen/logrus
-  version: f006c2ac4710855cf0f916dd6b77acf6b048dc6e
+  version: d682213848ed68c0a260ca37d6dd5ace8423f5ba
 - name: github.com/tidwall/gjson
-  version: be96719f990978a867f52c48f29d43f6b591da28
+  version: e62d62a3e1e9f324346170bbc04333341f803dfb
 - name: github.com/tidwall/match
   version: 173748da739a410c5b0b813b956f89ff94730b4c
 - name: github.com/xeipuuv/gojsonpointer

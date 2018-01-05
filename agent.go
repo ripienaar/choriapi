@@ -28,9 +28,6 @@ func NewDHT220Agent() (*mcorpc.Agent, error) {
 }
 
 func readingAction(req *mcorpc.Request, reply *mcorpc.Reply, agent *mcorpc.Agent, conn choria.ConnectorInfo) {
-	mu.Lock()
-	defer mu.Unlock()
-
 	var err error
 
 	reply.Data, err = rpi.read()

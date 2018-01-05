@@ -23,6 +23,7 @@ type RPi struct {
 
 	sensor         *dht22.DHT22
 	choriaInstance *server.Instance
+	mu             *sync.Mutex
 }
 
 type reading struct {
@@ -33,16 +34,14 @@ type reading struct {
 
 var rpi *RPi
 var fw *choria.Framework
-var mu *sync.Mutex
 
 // NewRPi sets up the DHT22 reading and configures the embedded Choria
 func NewRPi(pin string) (*RPi, error) {
 	rpi := &RPi{
 		Pin:    pin,
 		sensor: dht22.New(pin),
+		mu:     &sync.Mutex{},
 	}
-
-	mu = &sync.Mutex{}
 
 	cfg, err := choria.NewConfig("/dev/null")
 	if err != nil {
@@ -92,8 +91,8 @@ func (dh *RPi) Run(ctx context.Context, wg *sync.WaitGroup) {
 }
 
 func (dh *RPi) read() (*reading, error) {
-	mu.Lock()
-	defer mu.Unlock()
+	dh.mu.Lock()
+	defer dh.mu.Unlock()
 
 	temp, err := dh.sensor.Temperature()
 	if err != nil {
